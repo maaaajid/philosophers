@@ -6,7 +6,7 @@
 /*   By: aelbouaa <aelbouaa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/04 18:50:34 by aelbouaa          #+#    #+#             */
-/*   Updated: 2023/07/26 11:43:13 by aelbouaa         ###   ########.fr       */
+/*   Updated: 2023/07/28 23:14:17 by aelbouaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,15 @@ void	*routine(void *philo)
 	return (NULL);
 }
 
-void	data_init(t_philo *philo, t_data *data, char **av)
+void	*data_init(t_philo *philo, t_data *data, char **av)
 {
 	int	x;
 
-	x = 0;
+	x = -1;
 	data->num_philo = ft_atoi(av[1]);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philo);
+	if (!data->forks)
+		return ("a");
 	data->time_to_d = ft_atoi(av[2]);
 	data->time_to_e = ft_atoi(av[3]);
 	data->time_to_s = ft_atoi(av[4]);
@@ -54,7 +56,7 @@ void	data_init(t_philo *philo, t_data *data, char **av)
 	pthread_mutex_init(&data->print, NULL);
 	pthread_mutex_init(&data->s_e, NULL);
 	pthread_mutex_init(&data->c_m, NULL);
-	while (x < data->num_philo)
+	while (++x < data->num_philo)
 	{
 		philo[x].start_eat = get_time();
 		philo[x].id = x + 1;
@@ -63,8 +65,8 @@ void	data_init(t_philo *philo, t_data *data, char **av)
 		philo[x].count_meal = -1;
 		if (av[5])
 			philo[x].count_meal = ft_atoi(av[5]);
-		x++;
 	}
+	return (NULL);
 }
 
 int	is_dead(t_philo *philo)
@@ -102,22 +104,23 @@ int	main(int ac, char **av)
 	int			x;
 
 	if ((ac != 6 && ac != 5) || !check_arg(av))
-		return (printf("error\n"));
+		return (printf("error\n"), 1);
 	x = -1;
 	data = malloc(sizeof(t_data));
 	philo = malloc(sizeof(t_philo) * ft_atoi(av[1]));
-	data_init(philo, data, av);
+	if (!philo || !data)
+		return (printf("malloc failed\n"), 1);
+	if (data_init(philo, data, av))
+		return (printf("malloc failed\n"), 1);
 	while (++x < philo->data->num_philo)
 	{
 		if (pthread_create(&philo[x].threads, NULL, &routine, &philo[x]))
-			return (1);
+			return (printf("pthread_create failed\n"), 1);
 		if (pthread_detach(philo[x].threads))
-			return (1);
+			return (printf("pthread_detach failed\n"), 1);
 		usleep(50);
 	}
 	while (1)
-	{
 		if (is_dead(philo))
 			break ;
-	}
 }
