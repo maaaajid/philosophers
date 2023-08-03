@@ -6,7 +6,7 @@
 /*   By: aelbouaa <aelbouaa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/26 11:25:39 by aelbouaa          #+#    #+#             */
-/*   Updated: 2023/07/26 11:45:37 by aelbouaa         ###   ########.fr       */
+/*   Updated: 2023/08/03 23:24:35 by aelbouaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,19 @@ int	check_arg(char **av)
 	x = 1;
 	while (av[x])
 	{
-		z = 1;
+		z = 0;
 		while (av[x][z])
 		{
-			if (av[x][0] != '+' && !ft_isdigit(av[x][0]))
-				return (0);
 			if (!ft_isdigit(av[x][z]))
-				return (0);
+			{
+				if (z == 0 && av[x][z] == '+')
+				{
+					z++;
+					continue ;
+				}
+				else
+					return (0);
+			}
 			z++;
 		}
 		x++;

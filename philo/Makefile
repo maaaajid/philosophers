@@ -2,7 +2,7 @@ NAME=philo
 
 SRC= philo.c ft_atoi.c philo_utils.c
 
-CFLAGS= -Wall -Wextra -Werror -fsanitize=thread -g3
+CFLAGS= -Wall -Wextra -Werror
 
 
 all : $(NAME)
